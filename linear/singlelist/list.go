@@ -1,66 +1,76 @@
 package singlelist
 
-import "sync"
+import (
+	"math"
+	"sync"
+)
 
 /*
 	单链表
 */
 
-func NewSingleListNode(val int) *SingleListNode {
-	return &SingleListNode{
-		Val: val,
+type List struct {
+	sync.RWMutex
+	tail  INode
+	count int
+}
+
+func NewList() *List {
+	return &List{
+		tail: NewNode(math.MaxInt32, nil),
 	}
 }
 
-type SingleListNode struct {
-	Val  int
-	Next *SingleListNode
-}
-
-func (node *SingleListNode) SetNext(n *SingleListNode) {
-	node.Next = n
-}
-
-type SingleList struct {
-	sync.RWMutex
-	tail *SingleListNode
-}
-
-func (lst *SingleList) Add(n *SingleListNode) {
+func (lst *List) Add(n INode) {
 	lst.Lock()
 	defer lst.Unlock()
 
 	node := lst.tail
-	for node.Next != nil {
-		node = node.Next
+	for node.Next() != nil {
+		node = node.Next()
 	}
 	node.SetNext(n)
+	lst.count++
 }
 
-func (lst *SingleList) Get(val int) *SingleListNode {
+func (lst *List) Get(key int) INode {
 	lst.RLock()
 	defer lst.RUnlock()
 
 	node := lst.tail
 	for node != nil {
-		if node.Val == val {
+		if node.Key() == key {
 			return node
 		}
-		node = node.Next
+		node = node.Next()
 	}
 	return nil
 }
 
-func (lst *SingleList) Remove(val int) {
+func (lst *List) Remove(key int) {
 	lst.Lock()
 	defer lst.Unlock()
 
 	node := lst.tail
-	for node.Next != nil {
-		if node.Next.Val == val {
-			node.Next = node.Next.Next
+	for node.Next() != nil {
+		if node.Next().Key() == key {
+			lst.count--
+			node.SetNext(node.Next().Next())
 			return
 		}
-		node = node.Next
+		node = node.Next()
 	}
+}
+
+func (lst *List) Travel() []INode {
+	lst.RLock()
+	defer lst.RUnlock()
+
+	nodeList := make([]INode, 0, lst.count)
+	node := lst.tail
+	for node.Next() != nil {
+		nodeList = append(nodeList, node.Next())
+		node = node.Next()
+	}
+	return nodeList
 }
