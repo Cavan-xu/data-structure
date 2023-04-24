@@ -32,8 +32,8 @@ func (l *LRU) Get(key string) ([]byte, bool) {
 	}
 	// 元素被访问，移动到链表最前面
 	l.list.MoveToFront(ele)
-	entry := ele.Value.(*Entry)
-	return entry.Value, true
+	entry := ele.Value.(IEntry)
+	return entry.GetValue(), true
 }
 
 func (l *LRU) Add(entry IEntry) {
