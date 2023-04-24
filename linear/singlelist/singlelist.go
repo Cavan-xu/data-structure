@@ -1,10 +1,10 @@
-package linear
+package singlelist
 
 import "sync"
 
 /*
 	单链表
- */
+*/
 
 func NewSingleListNode(val int) *SingleListNode {
 	return &SingleListNode{
@@ -13,7 +13,7 @@ func NewSingleListNode(val int) *SingleListNode {
 }
 
 type SingleListNode struct {
-	Val int
+	Val  int
 	Next *SingleListNode
 }
 
@@ -34,7 +34,6 @@ func (lst *SingleList) Add(n *SingleListNode) {
 	for node.Next != nil {
 		node = node.Next
 	}
-
 	node.SetNext(n)
 }
 
@@ -49,7 +48,6 @@ func (lst *SingleList) Get(val int) *SingleListNode {
 		}
 		node = node.Next
 	}
-
 	return nil
 }
 
