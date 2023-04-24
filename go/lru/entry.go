@@ -1,29 +1,29 @@
 package lru
 
 type IEntry interface {
-	GetKey() string
-	GetValue() []byte
+	Key() string
+	Value() []byte
 	SetValue([]byte)
 	Len() int
 }
 
 type Entry struct {
-	Key   string
-	Value []byte
+	key   string
+	value []byte
 }
 
-func (e *Entry) GetKey() string {
-	return e.Key
+func (e *Entry) Key() string {
+	return e.key
 }
 
-func (e *Entry) GetValue() []byte {
-	return e.Value
+func (e *Entry) Value() []byte {
+	return e.value
 }
 
 func (e *Entry) SetValue(v []byte) {
-	e.Value = v
+	e.value = v
 }
 
 func (e *Entry) Len() int {
-	return len(e.Value)
+	return len(e.value)
 }

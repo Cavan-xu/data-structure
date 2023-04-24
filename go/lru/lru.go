@@ -33,7 +33,7 @@ func (l *LRU) Get(key string) ([]byte, bool) {
 	// 元素被访问，移动到链表最前面
 	l.list.MoveToFront(ele)
 	entry := ele.Value.(IEntry)
-	return entry.GetValue(), true
+	return entry.Value(), true
 }
 
 func (l *LRU) Add(entry IEntry) {
@@ -47,17 +47,17 @@ func (l *LRU) Add(entry IEntry) {
 		}
 	}()
 
-	ele, ok := l.cache[entry.GetKey()]
+	ele, ok := l.cache[entry.Key()]
 	if !ok {
-		l.cache[entry.GetKey()] = l.list.PushFront(entry)
-		l.curByte += len(entry.GetKey()) + entry.Len()
+		l.cache[entry.Key()] = l.list.PushFront(entry)
+		l.curByte += len(entry.Key()) + entry.Len()
 		return
 	}
 
 	l.list.MoveToFront(ele)
 	oldEntry := ele.Value.(IEntry)
 	l.curByte += entry.Len() - oldEntry.Len()
-	oldEntry.SetValue(entry.GetValue())
+	oldEntry.SetValue(entry.Value())
 }
 
 func (l *LRU) Len() int {
@@ -69,7 +69,7 @@ func (l *LRU) removeOldest() {
 	if ele != nil {
 		l.list.Remove(ele)
 		entry := ele.Value.(IEntry)
-		delete(l.cache, entry.GetKey())
-		l.curByte -= len(entry.GetKey()) + entry.Len()
+		delete(l.cache, entry.Key())
+		l.curByte -= len(entry.Key()) + entry.Len()
 	}
 }
