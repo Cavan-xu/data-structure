@@ -2,7 +2,6 @@ package lru
 
 import (
 	"container/list"
-	"sync"
 )
 
 type LRU struct {
@@ -10,7 +9,6 @@ type LRU struct {
 	curByte int
 	list    *list.List
 	cache   map[string]*list.Element
-	mu      sync.RWMutex
 }
 
 func New(maxByte int) *LRU {
@@ -23,9 +21,6 @@ func New(maxByte int) *LRU {
 }
 
 func (l *LRU) Get(key string) ([]byte, bool) {
-	l.mu.RLock()
-	defer l.mu.RUnlock()
-
 	ele, ok := l.cache[key]
 	if !ok {
 		return nil, false
@@ -37,9 +32,6 @@ func (l *LRU) Get(key string) ([]byte, bool) {
 }
 
 func (l *LRU) Add(entry IEntry) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
 	defer func() {
 		// 已使用字节数大于最大字节数时，需要移除链表尾部节点，直到已使用字节数小于最大字节数
 		for l.maxByte > 0 && l.maxByte < l.curByte {

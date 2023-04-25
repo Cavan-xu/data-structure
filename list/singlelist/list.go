@@ -2,7 +2,6 @@ package singlelist
 
 import (
 	"math"
-	"sync"
 )
 
 /*
@@ -10,7 +9,6 @@ import (
 */
 
 type List struct {
-	sync.RWMutex
 	tail  INode
 	count int
 }
@@ -22,9 +20,6 @@ func NewList() *List {
 }
 
 func (lst *List) Add(n INode) {
-	lst.Lock()
-	defer lst.Unlock()
-
 	node := lst.tail
 	for node.Next() != nil {
 		node = node.Next()
@@ -34,9 +29,6 @@ func (lst *List) Add(n INode) {
 }
 
 func (lst *List) Get(key int) INode {
-	lst.RLock()
-	defer lst.RUnlock()
-
 	node := lst.tail
 	for node != nil {
 		if node.Key() == key {
@@ -48,9 +40,6 @@ func (lst *List) Get(key int) INode {
 }
 
 func (lst *List) Remove(key int) {
-	lst.Lock()
-	defer lst.Unlock()
-
 	node := lst.tail
 	for node.Next() != nil {
 		if node.Next().Key() == key {
@@ -63,9 +52,6 @@ func (lst *List) Remove(key int) {
 }
 
 func (lst *List) Travel() []INode {
-	lst.RLock()
-	defer lst.RUnlock()
-
 	nodeList := make([]INode, 0, lst.count)
 	node := lst.tail
 	for node.Next() != nil {
@@ -76,9 +62,6 @@ func (lst *List) Travel() []INode {
 }
 
 func (lst *List) Reverse() {
-	lst.Lock()
-	defer lst.Unlock()
-
 	var pre INode = nil
 	node := lst.tail.Next()
 	for node != nil {
