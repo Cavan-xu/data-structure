@@ -74,3 +74,18 @@ func (lst *List) Travel() []INode {
 	}
 	return nodeList
 }
+
+func (lst *List) Reverse() {
+	lst.Lock()
+	defer lst.Unlock()
+
+	var pre INode = nil
+	node := lst.tail.Next()
+	for node != nil {
+		next := node.Next()
+		node.SetNext(pre)
+		pre = node
+		node = next
+	}
+	lst.tail.SetNext(pre)
+}

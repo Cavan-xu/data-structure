@@ -36,8 +36,6 @@ func (node *Node) Next() INode {
 }
 
 func (node *Node) SetNext(n INode) {
-	next, ok := n.(*Node)
-	if ok {
-		node.next = next
-	}
+	next, _ := n.(*Node)
+	node.next = next
 }
