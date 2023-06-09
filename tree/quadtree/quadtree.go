@@ -35,11 +35,11 @@ func (c *CurrentArea) Includes(x, y float64) bool {
 	return c.XStart < x && (c.XStart+c.AreaWidth) > x && c.YStart < y && (c.YStart+c.AreaWidth) > y
 }
 
-func (c *CurrentArea) CanCut() bool {
+func (c *CurrentArea) CanSplit() bool {
 	return (c.XStart+c.AreaWidth)/2 > 0 && (c.YStart+c.AreaWidth)/2 > 0
 }
 
-func (c *CurrentArea) Cut() [maxChild]CurrentArea {
+func (c *CurrentArea) Split() [maxChild]CurrentArea {
 	var child [maxChild]CurrentArea
 	width := c.AreaWidth / 2
 	child[leftUp] = CurrentArea{
@@ -190,7 +190,7 @@ func (n *Node) isLeafNode() bool {
 }
 
 func (n *Node) needGrew() bool {
-	return n.getCapacity() == maxCapacity && n.getDeep() < maxDepth && n.CanCut()
+	return n.getCapacity() == maxCapacity && n.getDeep() < maxDepth && n.CanSplit()
 }
 
 func (n *Node) getCapacity() int {
@@ -203,7 +203,7 @@ func (n *Node) getDeep() int {
 
 func (n *Node) grewTree() {
 	n.isLeaf = false
-	newAreaList := n.Cut()
+	newAreaList := n.Split()
 	for i, area := range newAreaList {
 		n.child[i] = NewTreeNode(area.XStart, area.YStart, area.AreaWidth, n.deep+1)
 		n.data.Range(func(entity Entity) bool {
