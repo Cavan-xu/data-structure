@@ -44,22 +44,22 @@ func (c *CurrentArea) Cut() [maxChild]CurrentArea {
 	width := c.AreaWidth / 2
 	child[leftUp] = CurrentArea{
 		XStart:    c.XStart,
-		YStart:    c.YStart,
+		YStart:    c.YStart + width,
 		AreaWidth: width,
 	}
 	child[rightUp] = CurrentArea{
 		XStart:    c.XStart + width,
-		YStart:    c.YStart,
+		YStart:    c.YStart + width,
 		AreaWidth: width,
 	}
 	child[leftDown] = CurrentArea{
 		XStart:    c.XStart,
-		YStart:    c.YStart + width,
+		YStart:    c.YStart,
 		AreaWidth: width,
 	}
 	child[rightDown] = CurrentArea{
 		XStart:    c.XStart + width,
-		YStart:    c.YStart + width,
+		YStart:    c.YStart,
 		AreaWidth: width,
 	}
 	return child
@@ -217,20 +217,16 @@ func (n *Node) grewTree() {
 }
 
 func (n *Node) findIndex(x, y float64) azimuth {
-	// 因为每个格子的左上角都是起始点
-	// 那么 右下方的格子的左上角则是这个格子的中心
-	// 那么就根据右下方个字的左上角去比较到底这个坐标在哪里
-	// 这样只需要比两次就好
-	if x < n.child[rightDown].XStart {
-		if y < n.child[rightDown].YStart {
-			return leftUp
+	if x < n.child[rightUp].XStart {
+		if y < n.child[rightUp].YStart {
+			return leftDown
 		}
-		return leftDown
+		return leftUp
 	}
-	if y < n.child[rightDown].YStart {
-		return rightUp
+	if y < n.child[rightUp].YStart {
+		return rightDown
 	}
-	return rightDown
+	return rightUp
 }
 
 func (n *Node) search(result *[]Entity) {
